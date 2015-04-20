@@ -1,5 +1,5 @@
 ;;;; package.lisp
 
 (defpackage #:fors-lic
-  (:use #:cl))
-
+  (:use #:cl)
+  (:export channel mfr pd))

@@ -17,7 +17,7 @@
 				:initform 835.0
 				:initarg  :licuid-density-design-point
 				:documentation "Плотность жидкости в контрольной точке."))
-  (:documentation "Представляет из себя канал форсунки, для которого выполняется соотношение:
+  (:documentation "Channel представляет из себя канал форсунки, для которого выполняется соотношение:
 G=A*(Δp*ρ)^0.5, где
 G - расход через форсунку;
 Α=const;
@@ -76,3 +76,5 @@ G - расход через форсунку;
      (pd-dp x)
      (/ (ld-dp x)
 	licuid-density)))
+
+(format t (documentation 'channel 'type))
