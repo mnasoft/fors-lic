@@ -1,5 +1,5 @@
 ;;;; fors-lic.lisp
-*fors*
+
 (in-package #:fors-lic)
 
 ;;; "fors-lic" goes here. Hacks and glory await!
