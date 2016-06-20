@@ -5,7 +5,7 @@
   (:export channel
 	   fors-lic
 	   )
-  (:export mfr
+  (:export mass-flow-rate
 	   pd
 	   mfr1-by-mfr
 	   mfr2-by-mfr

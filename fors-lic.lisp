@@ -1,5 +1,5 @@
 ;;;; fors-lic.lisp
-*fors*
+
 (in-package #:fors-lic)
 
 ;;; "fors-lic" goes here. Hacks and glory await!
@@ -30,11 +30,12 @@ G - расход через форсунку;
 - перепад давления 30 кгс/см2;
 - рабочая жидкость имеет плотность 835 кг/м3;
 при перепаде давления на канале 20 кгс/см2
-Решение
+Решение:
+(in-package #:fors-lic)
 (let ((ch (make-instance 'channel
 			 :mass-flow-rate-design-point (* 75.0 )
 			 :pressure-design-point 30.0 )))
-  (mfr ch 20.0))
+  (mass-flow-rate ch 20.0))
 =>61.237247 [кг/ч]
 2 Задача:
 Определить перепад давления на канале форсунки, спроектированном на следующие параметры:
@@ -42,6 +43,8 @@ G - расход через форсунку;
 - перепад давления 30 кгс/см2;
 - рабочая жидкость имеет плотность 835 кг/м3;
 при расходе через канал 100 кг/ч
+Решение:
+(in-package #:fors-lic)
 (let ((ch (make-instance 'channel
 			 :mass-flow-rate-design-point (* 75.0 )
 			 :pressure-design-point 30.0 )))
@@ -53,13 +56,13 @@ G - расход через форсунку;
   (format s "#channel(mfr-dp=~S pd-dp=~S ld-dp=~S)"
 	  (mfr-dp x) (pd-dp x) (ld-dp x)))
 
-(defgeneric mfr (chennel pressure-drop &key licuid-density)
+(defgeneric mass-flow-rate (chennel pressure-drop &key licuid-density)
   (:documentation "Функция определения массового расхода 
 через канал форсунки chennel
 при перепаде давления pressure-drop
 и плотности рабочей среды licuid-density"))
 
-(defmethod mfr ((x channel) pressure-drop &key (licuid-density (ld-dp x)))
+(defmethod mass-flow-rate ((x channel) pressure-drop &key (licuid-density (ld-dp x)))
   (* (mfr-dp x)
      (sqrt (/ (* pressure-drop licuid-density)
 	      (* (pd-dp x) (ld-dp x))))))
@@ -114,7 +117,7 @@ GΣ - расход через форсунку;
 (let ((ch (make-instance 'channel
 			 :mass-flow-rate-design-point (* 75.0 )
 			 :pressure-design-point 30.0 )))
-  (mfr ch 20.0))
+  (mass-flow-rate ch 20.0))
 =>61.237247 [кг/ч]
 2 Задача:
 Определить перепад давления на канале форсунки, спроектированном на следующие параметры:
@@ -133,13 +136,13 @@ GΣ - расход через форсунку;
   (format s "#fors-lic(~%	~S~%	~S)"
 	  (channel-1 x) (channel-2 x)))
 
-(defmethod mfr ((x fors-lic) pressure-drop &key (licuid-density (ld-dp (channel-1 x))))
-  (+ (mfr (channel-1 x) pressure-drop   :licuid-density licuid-density)
-     (mfr (channel-2 x) (pd2-by-pd1 x pressure-drop) :licuid-density licuid-density)))
+(defmethod mass-flow-rate ((x fors-lic) pressure-drop &key (licuid-density (ld-dp (channel-1 x))))
+  (+ (mass-flow-rate (channel-1 x) pressure-drop   :licuid-density licuid-density)
+     (mass-flow-rate (channel-2 x) (pd2-by-pd1 x pressure-drop) :licuid-density licuid-density)))
 
 (defmethod pd ((x fors-lic) mass-flow-rate &key (licuid-density (ld-dp (channel-1 x))))
   (half-div:H-DIV-LST 0 10.0
-		      #'(lambda (pd G fors) (- G (mfr fors pd )))
+		      #'(lambda (pd G fors) (- G (mass-flow-rate fors pd )))
 		      0 (list t mass-flow-rate x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -183,7 +186,7 @@ mass-flow-rate и плотности рабочей среды licuid-density"))
        (pd1-by-mfr x mass-flow-rate :licuid-density licuid-density)))
 
 (defmethod mfr2-by-mfr ((x fors-lic) mass-flow-rate &key licuid-density)
-    (mfr (channel-2 x)
+    (mass-flow-rate (channel-2 x)
 	 (pd2-by-mfr x mass-flow-rate :licuid-density licuid-density)))
 
 
