@@ -2,10 +2,7 @@
 
 (defpackage #:fors-lic
   (:use #:cl)
-  (:export channel
-	   print-object
-	   mass-flow-rate
-	   pd
+  (:export print-object
 	   )
   (:export fors-lic
 	   pd2-by-pd1

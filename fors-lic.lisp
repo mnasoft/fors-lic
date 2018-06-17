@@ -67,6 +67,11 @@ G - расход через форсунку;
   (pd ch 100.0 :licuid-density 1000.0))
 =>44.533333 [кгс/см2]"))
 
+(export 'channel)
+(export 'mfr-dp)
+(export 'pd-dp)
+(export 'ld-dp)
+
 (defmethod print-object ((x channel) s)
   (format s "#channel(mfr-dp=~S pd-dp=~S ld-dp=~S)"
 	  (mfr-dp x) (pd-dp x) (ld-dp x)))
@@ -76,6 +81,8 @@ G - расход через форсунку;
 через канал форсунки chennel
 при перепаде давления pressure-drop
 и плотности рабочей среды licuid-density"))
+
+(export 'mass-flow-rate)
 
 (defmethod mass-flow-rate ((x channel) pressure-drop &key (licuid-density (ld-dp x)))
   (* (mfr-dp x)
@@ -94,6 +101,8 @@ G - расход через форсунку;
      (pd-dp x)
      (/ (ld-dp x)
 	licuid-density)))
+
+(export 'pd)
 
 (format t (documentation 'channel 'type))
 
