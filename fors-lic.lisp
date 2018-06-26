@@ -4,6 +4,11 @@
 
 ;;; "fors-lic" goes here. Hacks and glory await!
 
+(export 'ch)
+(export 'ch-mfr)
+(export 'ch-pdr)
+(export 'ch-den)
+
 (defclass ch nil
   ((mfr :accessor ch-mfr
 	:initform 1.0
@@ -24,10 +29,6 @@ G  - расход через форсунку;
 Δp - перепад давления на канале форсунке;
 ρ  - плотность жидкости, протекающая через канал форсунки "))
 
-(export 'ch)
-(export 'ch-mfr)
-(export 'ch-pdr)
-(export 'ch-den)
 
 (defmethod print-object ((x ch) s)
   (format s "#ch(ch-mfr=~S ch-pdr=~S ch-den=~S)"

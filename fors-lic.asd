@@ -5,7 +5,7 @@
   :author "Your Name <your.name@example.com>"
   :license "Specify license here"
   :serial t
-  :depends-on (#:ltk)
+  :depends-on (#:ltk #:half-div #:math)
   :components (
 	       (:file "package")
                (:file "fors-lic")
