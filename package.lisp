@@ -2,8 +2,6 @@
 
 (defpackage #:fors-lic
   (:use #:cl)
-  (:export print-object
-	   )
   (:export fors-lic
 	   pd2-by-pd1
 	   pd1-by-mfr

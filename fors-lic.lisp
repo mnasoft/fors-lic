@@ -4,77 +4,36 @@
 
 ;;; "fors-lic" goes here. Hacks and glory await!
 
-(defclass channel nil
-  ((mass-flow-rate-design-point :accessor mfr-dp
-				:initform 1.0
-				:initarg  :mass-flow-rate-design-point
-				:documentation "Массовый расход в контрольной точке")
-   (pressure-drop-design-point :accessor pd-dp
-			  :initform 3.0
-			  :initarg  :pressure-design-point
-				:documentation "Перепад давления в контрольной точке")
-   (licuid-density-design-point :accessor ld-dp
-				:initform 835.0
-				:initarg  :licuid-density-design-point
-				:documentation "Плотность жидкости в контрольной точке"))
-  (:documentation "Channel представляет из себя канал форсунки, для которого выполняется соотношение:
-G=A*(Δp*ρ)^0.5, где
-G - расход через форсунку;
-Α=const;
+(defclass ch nil
+  ((mfr :accessor ch-mfr
+	:initform 1.0
+	:initarg  :mfr
+	:documentation "Массовый расход в контрольной точке")
+   (pdr :accessor ch-pdr
+	:initform 3.0
+	:initarg  :pdr
+	:documentation "Перепад давления в контрольной точке")
+   (den :accessor ch-den
+	:initform 835.0
+	:initarg  :den
+	:documentation "Плотность жидкости в контрольной точке"))
+  (:documentation "Ch представляет из себя канал форсунки, для которого выполняется соотношение:
+G  = A*(Δp*ρ)^0.5, где
+G  - расход через форсунку;
+Α  = const;
 Δp - перепад давления на канале форсунке;
-ρ  - плотность жидкости, протекающая через канал форсунки
-Примеры использования:
-======================
-Задача 1: Определить расход через канал форсунки, спроектированном на следующие параметры:
-- расход 75 кг/ч;
-- перепад давления 30 кгс/см2;
-- рабочая жидкость имеет плотность 835 кг/м3;
-при перепаде давления на канале 20 кгс/см2
-Решение:
---------
-(in-package #:fors-lic)
-(let ((ch (make-instance 'channel
-			 :mass-flow-rate-design-point (* 75.0 )
-			 :pressure-design-point 30.0 )))
-  (mass-flow-rate ch 20.0))
-=>61.237247 [кг/ч]
-==================================================
-Задача 2: Определить перепад давления на канале форсунки, спроектированном на следующие параметры:
-- расход 75 кг/ч;
-- перепад давления 30 кгс/см2;
-- рабочая жидкость имеет плотность 835 кг/м3;
-при расходе через канал 100 кг/ч
-Решение:
--------
-(in-package #:fors-lic)
-(let ((ch (make-instance 'channel
-			 :mass-flow-rate-design-point (* 75.0 )
-			 :pressure-design-point 30.0 )))
-  (pd ch 100.0))
-=>53.333336 [кгс/см2]
-==================================================
-Задача 3: Определить перепад давления на канале форсунки, спроектированном на следующие параметры:
-- расход 75 кг/ч;
-- перепад давления 30 кгс/см2;
-- рабочая жидкость имеет плотность 835 кг/м3;
-при расходе через канал 100 кг/ч и работе на жидкости с полтностью 1000 кг/м3
-Решение:
--------
-(in-package #:fors-lic)
-(let ((ch (make-instance 'channel
-			 :mass-flow-rate-design-point (* 75.0 )
-			 :pressure-design-point 30.0 )))
-  (pd ch 100.0 :licuid-density 1000.0))
-=>44.533333 [кгс/см2]"))
+ρ  - плотность жидкости, протекающая через канал форсунки "))
 
-(export 'channel)
-(export 'mfr-dp)
-(export 'pd-dp)
-(export 'ld-dp)
+(export 'ch)
+(export 'ch-mfr)
+(export 'ch-pdr)
+(export 'ch-den)
 
-(defmethod print-object ((x channel) s)
-  (format s "#channel(mfr-dp=~S pd-dp=~S ld-dp=~S)"
-	  (mfr-dp x) (pd-dp x) (ld-dp x)))
+(defmethod print-object ((x ch) s)
+  (format s "#ch(ch-mfr=~S ch-pdr=~S ch-den=~S)"
+	  (ch-mfr x) (ch-pdr x) (ch-den x)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defgeneric mass-flow-rate (chennel pressure-drop &key licuid-density)
   (:documentation "Функция определения массового расхода 
@@ -84,10 +43,10 @@ G - расход через форсунку;
 
 (export 'mass-flow-rate)
 
-(defmethod mass-flow-rate ((x channel) pressure-drop &key (licuid-density (ld-dp x)))
-  (* (mfr-dp x)
+(defmethod mass-flow-rate ((x ch) pressure-drop &key (licuid-density (ch-den x)))
+  (* (ch-mfr x)
      (sqrt (/ (* pressure-drop licuid-density)
-	      (* (pd-dp x) (ld-dp x))))))
+	      (* (ch-pdr x) (ch-den x))))))
 
 (defgeneric pd (chennel mass-flow-rate &key licuid-density)
     (:documentation "Функция определения перепада давления 
@@ -95,123 +54,110 @@ G - расход через форсунку;
 при массовом расходе через него mass-flow-rate
 и плотности рабочей среды licuid-density"))
 
-(defmethod pd ((x channel) mass-flow-rate &key (licuid-density (ld-dp x)))
-  (* (/ mass-flow-rate (mfr-dp x))
-     (/ mass-flow-rate (mfr-dp x))
-     (pd-dp x)
-     (/ (ld-dp x)
+(defmethod pd ((x ch) mass-flow-rate &key (licuid-density (ch-den x)))
+  (* (/ mass-flow-rate (ch-mfr x))
+     (/ mass-flow-rate (ch-mfr x))
+     (ch-pdr x)
+     (/ (ch-den x)
 	licuid-density)))
 
 (export 'pd)
 
-(format t (documentation 'channel 'type))
-
+(format t (documentation 'ch 'type))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defclass fors-lic nil
-  ((ch1 :accessor channel-1
-	:initform (make-instance 'fors-lic:channel :mass-flow-rate-design-point 1200.0)
-	:initarg  :channel-1
+(defclass fors_2 nil
+  ((ch1 :accessor fors_2-ch1
+	:initform (make-instance 'ch :mfr 1200.0)
+	:initarg  :ch1
 	:documentation "Первый канал форсунки")
-   (ch2 :accessor channel-2
-	:initform (make-instance 'fors-lic:channel :mass-flow-rate-design-point (- 7110.0 1200.0))
-	:initarg  :channel-2
+   (ch2 :accessor fors_2-ch2
+	:initform (make-instance 'ch :mfr (- 7110.0 1200.0))
+	:initarg  :ch2
 	:documentation "Второй канал форсунки")
-   (tbl-pd1-pd2 :accessor tbl-pd1-pd2
-		:initform '((0.0 0.0)(0.7 0.0)(1.5 0.5)(3.0 3.0) (4.0 4.0))
-		:initarg  :tbl-pd1-pd2
-		:documentation "Табличная зависимость перепада давления во втором канале форсунки от перепада давления в первом канале форсунки"))  
-  (:documentation "Fors-lic представляет из себя двухканальную форсунку, для которой выполняется соотношение:
-GΣ=A1*(Δp1*ρ1)^0.5+A2*(Δp2*ρ2)^0.5, где
+   (tbl :accessor fors_2-tbl
+	:initform '((0.0 0.0)(0.7 0.0)(1.5 0.5)(3.0 3.0) (4.0 4.0))
+	:initarg  :fors_2-tbl
+	:documentation "Табличная зависимость перепада давления во втором канале форсунки от перепада давления в первом канале форсунки"))  
+  (:documentation "fors_2 представляет из себя двухканальную форсунку, для которой выполняется соотношение:
+GΣ = A1*(Δp1*ρ1)^0.5+A2*(Δp2*ρ2)^0.5, где
 GΣ - расход через форсунку;
-Α1=const; Α2=const;
-Δp1 - перепад давления на первом канале форсунке;
-ρ1  - плотность жидкости, протекающая через первый канал форсунки
-Δp2 - перепад давления на втором канале форсунке;
-ρ2  - плотность жидкости, протекающая через второй канал форсунки
-Примеры использования:
-=====================
-Задача 1: Определить расход через канал форсунки, спроектированном на следующие параметры:
-- расход 75 кг/ч;
-- перепад давления 30 кгс/см2;
-- рабочая жидкость имеет плотность 835 кг/м3;
-при перепаде давления на канале 20 кгс/см2
-Решение:
---------
-(let ((ch (make-instance 'channel
-			 :mass-flow-rate-design-point (* 75.0 )
-			 :pressure-design-point 30.0 )))
-  (mass-flow-rate ch 20.0))
-=>61.237247 [кг/ч]
-=====================
-Задача 2: Определить перепад давления на канале форсунки, спроектированном на следующие параметры:
-- расход 75 кг/ч;
-- перепад давления 30 кгс/см2;
-- рабочая жидкость имеет плотность 835 кг/м3;
-при расходе через канал 100 кг/ч
-Решение:
---------
-(let ((ch (make-instance 'channel
-			 :mass-flow-rate-design-point (* 75.0 )
-			 :pressure-design-point 30.0 )))
-  (pd ch 100.0))
-=>53.333336 [кгс/см2]
-"))
+Α1 = const; Α2=const;
+Δp1- перепад давления на первом канале форсунке;
+ρ1 - плотность жидкости, протекающая через первый канал форсунки
+Δp2- перепад давления на втором канале форсунке;
+ρ2 - плотность жидкости, протекающая через второй канал форсунки"))
 
-(defmethod print-object ((x fors-lic) s)
-  (format s "#fors-lic(~%	~S~%	~S)"
-	  (channel-1 x) (channel-2 x)))
+(export 'fors_2)
+(export 'fors_2-ch1)
+(export 'fors_2-ch2)
+(export 'fors_2-tbl)
 
-(defmethod mass-flow-rate ((x fors-lic) pressure-drop &key (licuid-density (ld-dp (channel-1 x))))
-  (+ (mass-flow-rate (channel-1 x) pressure-drop   :licuid-density licuid-density)
-     (mass-flow-rate (channel-2 x) (pd2-by-pd1 x pressure-drop) :licuid-density licuid-density)))
+(defmethod print-object ((x fors_2) s)
+  (format s "#fors_2(~%	~S~%	~S)"
+	  (fors_2-ch1 x) (fors_2-ch2 x)))
 
-(defmethod pd ((x fors-lic) mass-flow-rate &key (licuid-density (ld-dp (channel-1 x))))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defmethod mass-flow-rate ((x fors_2) pressure-drop &key (licuid-density (ch-den (fors_2-ch1 x))))
+  (+ (mass-flow-rate (fors_2-ch1 x) pressure-drop   :licuid-density licuid-density)
+     (mass-flow-rate (fors_2-ch2 x) (pd2-by-pd1 x pressure-drop) :licuid-density licuid-density)))
+
+(defmethod pd ((x fors_2) mass-flow-rate &key (licuid-density (ch-den (fors_2-ch1 x))))
   (half-div:H-DIV-LST 0 10.0
 		      #'(lambda (pd G fors) (- G (mass-flow-rate fors pd )))
 		      0 (list t mass-flow-rate x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defgeneric pd2-by-pd1 (fors pressure-drop-on-cannel1)
-  )
+(defgeneric pd2-by-pd1 (fors pressure-drop-on-cannel1))
+
+(export 'pd2-by-pd1)
 
 (defgeneric pd1-by-mfr (fors mass-flow-rate &key licuid-density)
     (:documentation "Функция определения перепада давления 
 на первом канале форсунки при массовом расходе через форсунку 
 mass-flow-rate и плотности рабочей среды licuid-density"))
 
+(export 'pd1-by-mfr)
+
 (defgeneric pd2-by-mfr (fors mass-flow-rate &key licuid-density)
     (:documentation "Функция определения перепада давления 
 на втором канале форсунки при массовом расходе через него
  mass-flow-rate и плотности рабочей среды licuid-density"))
+
+(export 'pd2-by-mfr)
 
 (defgeneric mfr1-by-mfr (fors mass-flow-rate &key licuid-density)
     (:documentation "Функция определения расхода через
 первый канал форсунки при массовом расходе через форсунку
 mass-flow-rate и плотности рабочей среды licuid-density"))
 
+(export 'mfr1-by-mfr)
+
 (defgeneric mfr2-by-mfr (fors mass-flow-rate &key licuid-density)
     (:documentation "Функция определения расхода через
 второй канал форсунки при массовом расходе через форсунку
 mass-flow-rate и плотности рабочей среды licuid-density"))
 
+(export 'mfr2-by-mfr)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmethod pd2-by-pd1 ((x fors-lic) pressure-drop-on-cannel1)
-  (math:appr_table pressure-drop-on-cannel1 (tbl-pd1-pd2 x)))
+(defmethod pd2-by-pd1 ((x fors_2) pressure-drop-on-cannel1)
+  (math:appr_table pressure-drop-on-cannel1 (fors_2-tbl x)))
 
-(defmethod pd1-by-mfr ((x fors-lic) mass-flow-rate &key (licuid-density (ld-dp (channel-1 x))))
+(defmethod pd1-by-mfr ((x fors_2) mass-flow-rate &key (licuid-density (ch-den (fors_2-ch1 x))))
   (pd x mass-flow-rate  :licuid-density licuid-density))
 
-(defmethod pd2-by-mfr ((x fors-lic) mass-flow-rate &key (licuid-density (ld-dp (channel-1 x))))
+(defmethod pd2-by-mfr ((x fors_2) mass-flow-rate &key (licuid-density (ch-den (fors_2-ch1 x))))
     (pd2-by-pd1 x (pd x mass-flow-rate  :licuid-density licuid-density))
 )
 
-(defmethod mfr1-by-mfr ((x fors-lic) mass-flow-rate &key (licuid-density (ld-dp (channel-1 x))))
-  (mfr (channel-1 x)
+(defmethod mfr1-by-mfr ((x fors_2) mass-flow-rate &key (licuid-density (ch-den (fors_2-ch1 x))))
+  (mfr (fors_2-ch1 x)
        (pd1-by-mfr x mass-flow-rate :licuid-density licuid-density)))
 
-(defmethod mfr2-by-mfr ((x fors-lic) mass-flow-rate &key licuid-density)
-    (mass-flow-rate (channel-2 x)
+(defmethod mfr2-by-mfr ((x fors_2) mass-flow-rate &key licuid-density)
+    (mass-flow-rate (fors_2-ch2 x)
 		    (pd2-by-mfr x mass-flow-rate :licuid-density licuid-density)))
