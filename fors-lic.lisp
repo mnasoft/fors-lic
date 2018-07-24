@@ -156,7 +156,7 @@ mass-flow-rate и плотности рабочей среды licuid-density"))
 )
 
 (defmethod mfr1-by-mfr ((x fors_2) mass-flow-rate &key (licuid-density (ch-den (fors_2-ch1 x))))
-  (mfr (fors_2-ch1 x)
+  (mass-flow-rate (fors_2-ch1 x)
        (pd1-by-mfr x mass-flow-rate :licuid-density licuid-density)))
 
 (defmethod mfr2-by-mfr ((x fors_2) mass-flow-rate &key licuid-density)
