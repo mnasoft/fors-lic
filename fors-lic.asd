@@ -1,9 +1,9 @@
 ;;;; fors-lic.asd
 
-(asdf:defsystem #:fors-lic
+(defsystem #:fors-lic
   :description "Describe fors-lic here"
-  :author "Your Name <your.name@example.com>"
-  :license "Specify license here"
+  :author "Nick Matvyeyev <mnasoft@gmail.com>"
+  :license "GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 or later"  
   :serial t
   :depends-on (#:ltk #:half-div #:math)
   :components (
