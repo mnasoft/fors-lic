@@ -1,0 +1,24 @@
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t broken-links:nil c:nil creator:nil
+#+OPTIONS: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+OPTIONS: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+OPTIONS: timestamp:t title:t toc:t todo:t |:t
+#+TITLE: fors_2
+#+DATE: <2020-03-12 Чт>
+#+AUTHOR:
+#+EMAIL: namatv@KO11-118383
+#+LANGUAGE: en
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+#+CREATOR: Emacs 26.3 (Org mode 9.1.9)
+
+* fors_2
+Представляет двухканальную форсунку, для которой выполняется соотношение:
+- G_Σ=A_1*(Δp1*ρ_1)^0.5+A2*(Δp_2*ρ_2)^0.5, где
+- G_Σ - расход через форсунку;
+- Α_1=const; 
+- Α_2=const;
+- Δp_1 - перепад давления на первом канале форсунке;
+- ρ_1  - плотность жидкости, протекающая через первый канал форсунки;
+- Δp_2 - перепад давления на втором канале форсунке;
+- ρ_2  - плотность жидкости, протекающая через второй канал форсунки
