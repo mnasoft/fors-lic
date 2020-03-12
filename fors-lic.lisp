@@ -2,13 +2,11 @@
 
 (in-package #:fors-lic)
 
+(annot:enable-annot-syntax)
+
 ;;; "fors-lic" goes here. Hacks and glory await!
 
-(export 'ch)
-(export 'ch-mfr)
-(export 'ch-pdr)
-(export 'ch-den)
-
+@annot.class:export-class
 (defclass ch nil
   ((mfr :accessor ch-mfr
 	:initform 1.0
@@ -36,14 +34,20 @@ G  - расход через форсунку;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+@export
 (defgeneric mass-flow-rate (chennel pressure-drop &key licuid-density)
   (:documentation "Функция определения массового расхода 
 через канал форсунки chennel
 при перепаде давления pressure-drop
 и плотности рабочей среды licuid-density"))
 
-(export 'mass-flow-rate)
 
+@export
+@annot.doc:doc
+"Функция определения массового расхода 
+через канал форсунки chennel
+при перепаде давления pressure-drop
+и плотности рабочей среды licuid-density"
 (defmethod mass-flow-rate ((x ch) pressure-drop &key (licuid-density (ch-den x)))
   (* (ch-mfr x)
      (sqrt (/ (* pressure-drop licuid-density)
@@ -55,6 +59,12 @@ G  - расход через форсунку;
 при массовом расходе через него mass-flow-rate
 и плотности рабочей среды licuid-density"))
 
+@export
+@annot.doc:doc
+"Функция определения перепада давления 
+на канале форсунки chennel
+при массовом расходе через него mass-flow-rate
+и плотности рабочей среды licuid-density"
 (defmethod pd ((x ch) mass-flow-rate &key (licuid-density (ch-den x)))
   (* (/ mass-flow-rate (ch-mfr x))
      (/ mass-flow-rate (ch-mfr x))
@@ -62,12 +72,10 @@ G  - расход через форсунку;
      (/ (ch-den x)
 	licuid-density)))
 
-(export 'pd)
-
-(format t (documentation 'ch 'type))
+;;;;(format t (documentation 'ch 'type))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
+@annot.class:export-class
 (defclass fors_2 nil
   ((ch1 :accessor fors_2-ch1
 	:initform (make-instance 'ch :mfr 1200.0)
@@ -89,11 +97,6 @@ GΣ - расход через форсунку;
 ρ1 - плотность жидкости, протекающая через первый канал форсунки
 Δp2- перепад давления на втором канале форсунке;
 ρ2 - плотность жидкости, протекающая через второй канал форсунки"))
-
-(export 'fors_2)
-(export 'fors_2-ch1)
-(export 'fors_2-ch2)
-(export 'fors_2-tbl)
 
 (defmethod print-object ((x fors_2) s)
   (format s "#fors_2(~%	~S~%	~S)"
