@@ -25,15 +25,27 @@ learn how to do this.
 
 @begin(section)
 @title(Методы)
+@cl:with-package[name="cl-user"](
+ @cl:doc(method print-object (x channel) s)
+ @cl:doc(method print-object (x fors_2) s)
+)
+
 @cl:with-package[name="fors-lic"](
- @cl:doc(method mass-flow-rate (x ch) pressure-drop &key licuid-density))
+ @cl:doc(method mass-flow-rate (x channel) pressure-drop &key (liquid-density (channel-den x)))
+ @cl:doc(method pd (x channel) mass-flow-rate &key (liquid-density (channel-den x)))
+ @cl:doc(method mass-flow-rate (x fors_2) pressure-drop &key (liquid-density (channel-den (fors_2-channel1 x))))
+ @cl:doc(method pd (x fors_2) mass-flow-rate &key (liquid-density (channel-den (fors_2-channel1 x))))
+ @cl:doc(method pd2-by-pd1 (x fors_2) pressure-drop-on-channel1)
+ @cl:doc(method pd1-by-mfr (x fors_2) mass-flow-rate &key (liquid-density (channel-den (fors_2-channel1 x))))
+ @cl:doc(method pd2-by-mfr (x fors_2) mass-flow-rate &key (liquid-density (channel-den (fors_2-channel1 x))))
+ @cl:doc(method mfr1-by-mfr (x fors_2) mass-flow-rate &key (liquid-density (channel-den (fors_2-channel1 x))))
+ @cl:doc(method mfr2-by-mfr (x fors_2) mass-flow-rate &key liquid-density)
+)
 @end(section)
 
 @begin(section)
 @title(Классы)
 @cl:with-package[name="fors-lic"](
- @cl:doc(class ch)
+ @cl:doc(class channel)
  @cl:doc(class fors_2))
 @end(section)
-
-

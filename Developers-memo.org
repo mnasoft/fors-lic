@@ -41,8 +41,7 @@ basename `pwd`
 #+END_SRC
 
 #+RESULTS: make-graph
-: #GRAPH(VC=2 RC=0)
-: (T:"ch2" T:"ch1" ))
+: #GRAPH(VC=0 RC=0)
 
 #+RESULTS:
 : #GRAPH(VC=23 RC=26)
