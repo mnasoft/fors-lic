@@ -45,7 +45,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun half_div  (lx ly x)
-  (math:appr_table x (mapcar 'list lx ly)))
+  (math:appr-table x (mapcar 'list lx ly)))
 
 (half_div *a_g* *alfa_g*  15.5) 
 

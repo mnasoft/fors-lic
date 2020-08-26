@@ -165,7 +165,7 @@ mass-flow-rate и плотности рабочей среды liquid-density"))
 на втором канале форсунки fors по перепаду давления на первом канале
 pressure-drop-on-channel1"
 (defmethod pd2-by-pd1 ((x fors_2) pressure-drop-on-channel1)
-  (math:appr_table pressure-drop-on-channel1 (fors_2-tbl x)))
+  (math:appr-table pressure-drop-on-channel1 (fors_2-tbl x)))
 
 @export
 @annot.doc:doc
