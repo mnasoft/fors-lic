@@ -4,7 +4,7 @@
 3) http://commondoc.github.io/codex/docs/tutorial.html
 4) [[/home/namatv/.slynkrc]]
 
-* Генерироване документации
+* Генерирование документации
 #+name: pwd
 #+BEGIN_SRC shell
 pwd
