@@ -42,35 +42,33 @@ G  - расход через форсунку;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(export 'mass-flow-rate )
-(defgeneric mass-flow-rate (channel pressure-drop &key liquid-density)
-  (:documentation "Функция определения массового расхода 
-через канал форсунки channel
-при перепаде давления pressure-drop
-и плотности рабочей среды liquid-density"))
+(export '(mass-flow-rate))
 
-(export 'mass-flow-rate )
+(defgeneric mass-flow-rate (channel pressure-drop &key liquid-density)
+  (:documentation "@b(Описание:) обобщенная функция @b(mass-flow-rate)
+определения массового расхода через канал форсунки @b(channel) при 
+перепаде давления @b(pressure-drop) и плотности 
+рабочей среды @b(liquid-density)."))
+
+(export '(pd))
+
+(defgeneric pd (channel mass-flow-rate &key liquid-density)
+    (:documentation "@b(Описание:) обобщенная функция @b(pd) определения 
+перепада давления на канале форсунки @b(channel) при массовом расходе
+через него @(mass-flow-rate) и плотности рабочей среды @(liquid-density)."))
+
+(export '(mass-flow-rate))
+
 (defmethod mass-flow-rate ((x channel) pressure-drop &key (liquid-density (channel-den x)))
-"Функция определения массового расхода 
-через канал форсунки channel
-при перепаде давления pressure-drop
-и плотности рабочей среды liquid-density"
+"@b(Описание:) метод @b(mass-flow-rate) для класса @b(channel)."
   (* (channel-mfr x)
      (sqrt (/ (* pressure-drop liquid-density)
 	      (* (channel-pdr x) (channel-den x))))))
 
-(defgeneric pd (channel mass-flow-rate &key liquid-density)
-    (:documentation "Функция определения перепада давления 
-на канале форсунки channel
-при массовом расходе через него mass-flow-rate
-и плотности рабочей среды liquid-density"))
+(export '(pd))
 
-(export 'pd )
 (defmethod pd ((x channel) mass-flow-rate &key (liquid-density (channel-den x)))
-"Функция определения перепада давления 
-на канале форсунки channel
-при массовом расходе через него mass-flow-rate
-и плотности рабочей среды liquid-density"
+"@b(Описание:) метод @b(pd) для класса @b(pd)."
   (* (/ mass-flow-rate (channel-mfr x))
      (/ mass-flow-rate (channel-mfr x))
      (channel-pdr x)
@@ -81,10 +79,7 @@ G  - расход через форсунку;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(export 'fors_2)
-(export 'fors_2-channel1)
-(export 'fors_2-channel2)
-(export 'fors_2-tbl)
+(export '(fors_2 fors_2-channel1 fors_2-channel2 fors_2-tbl))
 
 (defclass fors_2 ()
   ((channel1 :accessor fors_2-channel1
@@ -114,7 +109,8 @@ GΣ - расход через форсунку;
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(export 'mass-flow-rate )
+(export '(mass-flow-rate))
+
 (defmethod mass-flow-rate ((x fors_2) pressure-drop &key (liquid-density (channel-den (fors_2-channel1 x))))
 "Функция определения массового расхода 
 через форсунку fors_2
@@ -123,7 +119,8 @@ GΣ - расход через форсунку;
   (+ (mass-flow-rate (fors_2-channel1 x) pressure-drop   :liquid-density liquid-density)
      (mass-flow-rate (fors_2-channel2 x) (pd2-by-pd1 x pressure-drop) :liquid-density liquid-density)))
 
-(export 'pd )
+(export 'pd)
+
 (defmethod pd ((x fors_2) mass-flow-rate &key (liquid-density (channel-den (fors_2-channel1 x))))
 "Функция определения перепада давления 
 на форсунке fors_2 при массовом расходе через него mass-flow-rate
@@ -133,38 +130,43 @@ GΣ - расход через форсунку;
 		      0 (list t mass-flow-rate x)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(defgeneric pd2-by-pd1 (fors pressure-drop-on-channel1)
-  (:documentation "Функция определения перепада давления 
-на втором канале форсунки fors по перепаду давления на первом канале
-pressure-drop-on-channel1"))
 
-(export 'pd1-by-mfr )
+(export '(pd2-by-pd1))
+
+(defgeneric pd2-by-pd1 (fors pressure-drop-on-channel1)
+  (:documentation "@b(Описание:) обобщенная функция @b(pd2-by-pd1)
+определения перепада давления на втором канале форсунки fors по 
+перепаду давления на первом канале @(pressure-drop-on-channel1)"))
+
+(export '(pd1-by-mfr))
 
 (defgeneric pd1-by-mfr (fors mass-flow-rate &key liquid-density)
-    (:documentation "Функция определения перепада давления 
-на первом канале форсунки при массовом расходе через форсунку 
-mass-flow-rate и плотности рабочей среды liquid-density"))
+    (:documentation "@b(Описание:) обобщенная функция @b(pd1-by-mfr) определения
+перепада давления на первом канале форсунки при массовом расходе 
+через форсунку @b(mass-flow-rate) и плотности рабочей среды @b(liquid-density)"))
 
-(export 'pd2-by-mfr )
+(export '(pd2-by-mfr))
 
 (defgeneric pd2-by-mfr (fors mass-flow-rate &key liquid-density)
-    (:documentation "Функция определения перепада давления 
-на втором канале форсунки при массовом расходе через него
- mass-flow-rate и плотности рабочей среды liquid-density"))
+  (:documentation "@b(Описание:) обобщенная функция @b(pd2-by-mfr) определения перепада
+давления на втором канале форсунки при массовом расходе через него
+@b(mass-flow-rate) и плотности рабочей среды @b(liquid-density)."))
 
 (export 'mfr1-by-mfr )
 
 (defgeneric mfr1-by-mfr (fors mass-flow-rate &key liquid-density)
-    (:documentation "Функция определения расхода через
-первый канал форсунки при массовом расходе через форсунку
-mass-flow-rate и плотности рабочей среды liquid-density"))
+    (:documentation "@b(Описание:) обобщенная функция @b(mfr1-by-mfr)
+определения расхода через первый канал форсунки при массовом 
+расходе через форсунку @b(mass-flow-rate) и плотности 
+рабочей среды @b(liquid-density)"))
 
-(export 'mfr2-by-mfr )
+
+
 
 (defgeneric mfr2-by-mfr (fors mass-flow-rate &key liquid-density)
-    (:documentation "Функция определения расхода через
-второй канал форсунки при массовом расходе через форсунку
-mass-flow-rate и плотности рабочей среды liquid-density"))
+    (:documentation "@b(Описание:) обобщенная функция @b(mfr2-by-mfr) определения 
+расхода через второй канал форсунки при массовом расходе через форсунку
+@b(mass-flow-rate) и плотности рабочей среды @b(liquid-density)"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -174,7 +176,7 @@ mass-flow-rate и плотности рабочей среды liquid-density"))
 "Функция определения перепада давления 
 на втором канале форсунки fors по перепаду давления на первом канале
 pressure-drop-on-channel1"
-  (math.appr:appr-table pressure-drop-on-channel1 (fors_2-tbl x)))
+  (math/appr:appr-table pressure-drop-on-channel1 (fors_2-tbl x)))
 
 (export 'pd1-by-mfr )
 
