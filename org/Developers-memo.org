@@ -1,64 +1,111 @@
 * Ссылки [[~/org/sbcl/sbcl-referencies.org][Ссылки]]
+ 
 * Генерирование документации
-#+name: pwd
-#+BEGIN_SRC shell
-pwd
+#+name: codex
+#+BEGIN_SRC lisp
+  (loop
+    :for i :in
+    '((:fors-lic       :fors-lic)
+      )
+    :do (mnas-package:document (first i) (second i)))
+  (codex:document :fors-lic)
 #+END_SRC
 
-#+RESULTS: pwd
-: /home/namatv/quicklisp/local-projects/mnas/mnas-string
-
-#+name: basename-pwd
-#+BEGIN_SRC shell
-basename `pwd`
+#+name: graphs
+#+BEGIN_SRC lisp :var codex=codex
+  (loop
+    :for i :in
+    '(:fors-lic
+     )
+    :do (mnas-package:make-codex-graphs i i))
 #+END_SRC
 
-#+RESULTS: basename-pwd
-: mnas-string
+#+RESULTS: graphs
+: NIL
 
-#+name:make-graph
-#+BEGIN_SRC lisp :var pwd=pwd :var basename-pwd=basename-pwd
-  ;;;; (require :codex)
-  ;;;; (require :mnas-package)
-  ;;;;
-  ;;;; (require :mnas-string)
-  (let ((pkg :fors-lic)
-	(fpath (concatenate
-		'string
-		(cond ((uiop:getenv "MSYS_HOME")) (t ""))
-		pwd "/docs/build/"
-		basename-pwd "/html/")))
-    (codex:document pkg)
-    (mnas-package:view-call-graph   pkg :out-type "png" :viewer nil :fpath fpath :fname "call-graph")
-    (mnas-package:view-system-graph pkg :out-type "png" :viewer nil :fpath fpath :fname "system-graph")
-    (mnas-package:view-class-graph  pkg :out-type "png" :viewer nil :fpath fpath :fname "class-graph")
-    (mnas-package:view-symbol-graph pkg :out-type "png" :viewer nil :fpath fpath :fname "symbol-graph"))
-#+END_SRC
-
-#+RESULTS: make-graph
-: #GRAPH(VC=0 RC=0)
-
-#+RESULTS:
-: #GRAPH(VC=23 RC=26)
-: (T:"translit" T:"init-month-names" T:"split" T:"print-universal-date" T:"init-cir-gr->en" T:"init-space-cir-gr->en" T:"*cir-gr->en*" T:"*mon-ru*" T:"*space-cir-gr->en*" T:"*mon-en*" T:"*mon-ua*" T:"*omit-nulls*" T:"*default-month-language*" T:"*cyrillic->english-small-letter*" T:"*cyrillic-capital-letter*" T:"*cyrillic-small-letter*" T:"*greek->english-small-letter*" T:"*cyrillic->english-capital-letter*" T:"*greek-capital-letter*" T:"*space*" T:"*greek->english-capital-letter*" T:"*minus*" T:"*greek-small-letter*" )
-: ((T:"translit"->T:"*cir-gr->en*") (T:"init-cir-gr->en"->T:"*cir-gr->en*") (T:"init-month-names"->T:"*mon-ru*") (T:"init-space-cir-gr->en"->T:"*space-cir-gr->en*") (T:"init-month-names"->T:"*mon-en*") (T:"init-month-names"->T:"*mon-ua*") (T:"split"->T:"*omit-nulls*") (T:"print-universal-date"->T:"*default-month-language*") (T:"init-cir-gr->en"->T:"*cyrillic->english-small-letter*") (T:"init-space-cir-gr->en"->T:"*cyrillic->english-small-letter*") (T:"init-cir-gr->en"->T:"*cyrillic-capital-letter*") (T:"init-space-cir-gr->en"->T:"*cyrillic-capital-letter*") (T:"init-cir-gr->en"->T:"*cyrillic-small-letter*") (T:"init-space-cir-gr->en"->T:"*cyrillic-small-letter*") (T:"init-cir-gr->en"->T:"*greek->english-small-letter*") (T:"init-space-cir-gr->en"->T:"*greek->english-small-letter*") (T:"init-cir-gr->en"->T:"*cyrillic->english-capital-letter*") (T:"init-space-cir-gr->en"->T:"*cyrillic->english-capital-letter*") (T:"init-cir-gr->en"->T:"*greek-capital-letter*") (T:"init-space-cir-gr->en"->T:"*greek-capital-letter*") (T:"init-space-cir-gr->en"->T:"*space*") (T:"init-cir-gr->en"->T:"*greek->english-capital-letter*") (T:"init-space-cir-gr->en"->T:"*greek->english-capital-letter*") (T:"init-space-cir-gr->en"->T:"*minus*") (T:"init-cir-gr->en"->T:"*greek-small-letter*") (T:"init-space-cir-gr->en"->T:"*greek-small-letter*") ))
 * Публикация
 #+name: publish
-#+BEGIN_SRC shell :var make-graph=make-graph
-  if [[ `hostname` == "mnasoft-00" ]]
-  then
-      echo "mnasoft-00"
-      mkdir -p "$HOME/public_html/Common-Lisp-Programs/"
-      CDIR=`basename $PWD`
-      rm -rf "$HOME/public_html/Common-Lisp-Programs/$CDIR/"
-      cp -rf ./docs/build/* "$HOME/public_html/Common-Lisp-Programs/"
-  fi
-  if [[ `hostname` == "ko11-118383" ]]
-  then
-      CDIR=`basename $PWD`
-      rm -rf "\\\\n133619\\home\\_namatv\\public_html\\Site\\Development\\Common-Lisp-Programs\\$CDIR\\"
-      cp -rf ./docs/build/* "\\\\n133619\\home\\_namatv\\public_html\\Site\\Development\\Common-Lisp-Programs\\"
-   fi
+#+BEGIN_SRC shell :var graphs=graphs
+    mkdir -p "$HOME/public_html/Common-Lisp-Programs/"
+    CDIR=`dirname $PWD | xargs basename`
+    rsync -Pazh --delete ../docs/build/$CDIR/html/ $HOME/public_html/Common-Lisp-Programs/$CDIR 
+    if [[ `hostname` == "mnasoft-00" ]]
+    then
+	echo "mnasoft-00"
+  #     sh ~/bin/pi-html
+    fi
+    if [[ `hostname` == "N118383" ]]
+    then
+	echo "N118383"
+        CPL="//n133619/home/_namatv/public_html/Site/Development/Common-Lisp-Programs"
+	mkdir -p $CPL/$CDIR
+	rsync -Pazh --delete ../docs/build/$CDIR/html/ $CPL/$CDIR
+     fi
 #+END_SRC
 
 #+RESULTS: publish
+| sending                      | incremental | file | list       |         |   |         |      |            |         |          |               |
+| ./                           |             |      |            |         |   |         |      |            |         |          |               |
+| call-graph-fors-lic.gv       |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 45          | 100% | 0.00kB/s   | 0:00:00 |   | 45      | 100% | 0.00kB/s   | 0:00:00 | (xfr#1,  | to-chk=14/16) |
+| call-graph-fors-lic.gv.png   |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 116         | 100% | 113.28kB/s | 0:00:00 |   | 116     | 100% | 113.28kB/s | 0:00:00 | (xfr#2,  | to-chk=13/16) |
+| class-graph-fors-lic.gv      |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 68          | 100% | 66.41kB/s  | 0:00:00 |   | 68      | 100% | 66.41kB/s  | 0:00:00 | (xfr#3,  | to-chk=12/16) |
+| class-graph-fors-lic.gv.png  |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 7.44K       | 100% | 7.09MB/s   | 0:00:00 |   | 7.44K   | 100% | 7.09MB/s   | 0:00:00 | (xfr#4,  | to-chk=11/16) |
+| fors-lic.html                |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 28.45K      | 100% | 1.81MB/s   | 0:00:00 |   | 28.45K  | 100% | 1.81MB/s   | 0:00:00 | (xfr#5,  | to-chk=10/16) |
+| symbol-graph-fors-lic.gv     |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 45          | 100% | 2.93kB/s   | 0:00:00 |   | 45      | 100% | 2.93kB/s   | 0:00:00 | (xfr#6,  | to-chk=9/16)  |
+| symbol-graph-fors-lic.gv.png |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 116         | 100% | 7.55kB/s   | 0:00:00 |   | 116     | 100% | 7.55kB/s   | 0:00:00 | (xfr#7,  | to-chk=8/16)  |
+| system-graph-fors-lic.gv     |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 1.82K       | 100% | 118.36kB/s | 0:00:00 |   | 1.82K   | 100% | 118.36kB/s | 0:00:00 | (xfr#8,  | to-chk=7/16)  |
+| system-graph-fors-lic.gv.png |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 32.77K      |   3% | 2.08MB/s   | 0:00:00 |   | 890.97K | 100% | 6.03MB/s   | 0:00:00 | (xfr#9,  | to-chk=6/16)  |
+| графы-fors-lic.html          |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 2.14K       | 100% | 14.84kB/s  | 0:00:00 |   | 2.14K   | 100% | 14.84kB/s  | 0:00:00 | (xfr#10, | to-chk=5/16)  |
+| обзор.html                   |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 2.18K       | 100% | 15.11kB/s  | 0:00:00 |   | 2.18K   | 100% | 15.11kB/s  | 0:00:00 | (xfr#11, | to-chk=4/16)  |
+| static/                      |             |      |            |         |   |         |      |            |         |          |               |
+| static/highlight.css         |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 1.57K       | 100% | 10.88kB/s  | 0:00:00 |   | 1.57K   | 100% | 10.88kB/s  | 0:00:00 | (xfr#12, | to-chk=2/16)  |
+| static/highlight.js          |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 22.99K      | 100% | 159.22kB/s | 0:00:00 |   | 22.99K  | 100% | 159.22kB/s | 0:00:00 | (xfr#13, | to-chk=1/16)  |
+| static/style.css             |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 4.32K       | 100% | 29.93kB/s  | 0:00:00 |   | 4.32K   | 100% | 29.93kB/s  | 0:00:00 | (xfr#14, | to-chk=0/16)  |
+| N118383                      |             |      |            |         |   |         |      |            |         |          |               |
+| sending                      | incremental | file | list       |         |   |         |      |            |         |          |               |
+| ./                           |             |      |            |         |   |         |      |            |         |          |               |
+| call-graph-fors-lic.gv       |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 45          | 100% | 0.00kB/s   | 0:00:00 |   | 45      | 100% | 0.00kB/s   | 0:00:00 | (xfr#1,  | to-chk=14/16) |
+| call-graph-fors-lic.gv.png   |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 116         | 100% | 113.28kB/s | 0:00:00 |   | 116     | 100% | 113.28kB/s | 0:00:00 | (xfr#2,  | to-chk=13/16) |
+| class-graph-fors-lic.gv      |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 68          | 100% | 66.41kB/s  | 0:00:00 |   | 68      | 100% | 66.41kB/s  | 0:00:00 | (xfr#3,  | to-chk=12/16) |
+| class-graph-fors-lic.gv.png  |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 7.44K       | 100% | 7.09MB/s   | 0:00:00 |   | 7.44K   | 100% | 7.09MB/s   | 0:00:00 | (xfr#4,  | to-chk=11/16) |
+| fors-lic.html                |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 28.45K      | 100% | 27.14MB/s  | 0:00:00 |   | 28.45K  | 100% | 27.14MB/s  | 0:00:00 | (xfr#5,  | to-chk=10/16) |
+| symbol-graph-fors-lic.gv     |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 45          | 100% | 43.95kB/s  | 0:00:00 |   | 45      | 100% | 43.95kB/s  | 0:00:00 | (xfr#6,  | to-chk=9/16)  |
+| symbol-graph-fors-lic.gv.png |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 116         | 100% | 113.28kB/s | 0:00:00 |   | 116     | 100% | 113.28kB/s | 0:00:00 | (xfr#7,  | to-chk=8/16)  |
+| system-graph-fors-lic.gv     |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 1.82K       | 100% | 1.73MB/s   | 0:00:00 |   | 1.82K   | 100% | 1.73MB/s   | 0:00:00 | (xfr#8,  | to-chk=7/16)  |
+| system-graph-fors-lic.gv.png |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 32.77K      |   3% | 2.08MB/s   | 0:00:00 |   | 890.97K | 100% | 1.51MB/s   | 0:00:00 | (xfr#9,  | to-chk=6/16)  |
+| графы-fors-lic.html          |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 2.14K       | 100% | 3.72kB/s   | 0:00:00 |   | 2.14K   | 100% | 3.72kB/s   | 0:00:00 | (xfr#10, | to-chk=5/16)  |
+| обзор.html                   |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 2.18K       | 100% | 3.79kB/s   | 0:00:00 |   | 2.18K   | 100% | 3.79kB/s   | 0:00:00 | (xfr#11, | to-chk=4/16)  |
+| static/                      |             |      |            |         |   |         |      |            |         |          |               |
+| static/highlight.css         |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 1.57K       | 100% | 2.73kB/s   | 0:00:00 |   | 1.57K   | 100% | 2.73kB/s   | 0:00:00 | (xfr#12, | to-chk=2/16)  |
+| static/highlight.js          |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 22.99K      | 100% | 39.95kB/s  | 0:00:00 |   | 22.99K  | 100% | 39.95kB/s  | 0:00:00 | (xfr#13, | to-chk=1/16)  |
+| static/style.css             |             |      |            |         |   |         |      |            |         |          |               |
+|                              | 4.32K       | 100% | 7.51kB/s   | 0:00:00 |   | 4.32K   | 100% | 7.51kB/s   | 0:00:00 | (xfr#14, | to-chk=0/16)  |
+
+

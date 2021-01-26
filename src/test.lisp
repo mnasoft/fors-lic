@@ -2,9 +2,25 @@
 
 (in-package #:fors-lic)
 
-(make-instance 'fors_2
-	       :ch1 (make-instance 'ch :mfr 75.0)
-	       :ch2 (make-instance 'ch :mfr (- 515.0 75.0)))
+(require :math)
+
+(math/stat:average 165 171)
+
+
+(defparameter *f2*
+  (make-instance '<fors-2> 
+	         :channel-1 (make-instance '<channel> :mfr (* 8.0 (math/stat:average 54.0 (+ 54.0 5.0))))
+	         :channel-2 (make-instance '<channel> :mfr (* 8.0 (- (math/stat:average 165.0 171.0) (math/stat:average 54.0 (+ 54.0 5.0)))))
+                 :tbl       '((0.0 0.0) (1.8 0.0) (2.5 2.0) (4.0 4.0))))
+
+(require :vgplot)
+(<fors-2>-tbl *f2*)  ; => ((0.0 0.0) (0.7 0.0) (1.5 0.5) (3.0 3.0) (4.0 4.0))
+
+(setf (<fors-2>-tbl *f2*) '((0.0 0.0) (1.5 0.0) (2.0 0.5) (2.5 2.0) (4.0 4.0)))
+
+(vgplot:plot (mapcar #'first (<fors-2>-tbl *f2*))
+             (mapcar #'second (<fors-2>-tbl *f2*)))
+
 
 (mass-flow-rate *f* 3.0)
 

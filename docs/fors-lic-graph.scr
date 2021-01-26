@@ -1,0 +1,6 @@
+  @begin(section) @title(Графы fors-lic)
+  @begin(list)
+   @item(system-graph @image[src=./system-graph-fors-lic.gv.png]())
+   @item(class-graph  @image[src=./class-graph-fors-lic.gv.png]())
+  @end(list)
+ @end(section)

@@ -1,0 +1,97 @@
+@begin(section) @title(Обзор)
+
+Система предназначена для выполнения расчета перепадов
+  давления топлива и расхода топлива через каналы форсунки подачи
+  жидкого топлива.@end(section)
+@begin(section) @title(FORS-LIC)
+
+ @b(Описание:) пакет @b(fors-lic) поределяет следующие классы:
+@begin(list)
+ @item(<channel> - канал подачи жидкого топлива;)
+ @item(<fors-2>  - двухканльная форсунка подачи жидкого топлива.)
+@end(list)
+
+ @b(Примеры использования:)
+
+ Задача 1
+
+ Определить расход через канал форсунки, спроектированном на следующие параметры:
+@begin(list)
+ @item(расход 75 кг/ч; перепад давления 30 кгс/см@sup(2);)
+ @item(рабочая жидкость имеет плотность 835 кг/м@sup(3);)
+ @item(при перепаде давления на канале 20 кгс/см@sup(2).)
+@end(list)
+
+ @b(Решение:)
+@begin[lang=lisp](code)
+ (in-package #:fors-lic)
+ (let ((ch (make-instance 'ch :mfr (* 75.0) :pdr 30.0 )))
+  (mass-flow-rate ch 20.0))
+ =>61.237247 [кг/ч]
+ @end(code)
+
+ Задача 2
+
+ Определить перепад давления на канале форсунки, спроектированном на следующие параметры:
+@begin(list)
+ @item(расход 75 кг/ч; перепад давления 30 кгс/см@sub(2);)
+ @item(рабочая жидкость имеет плотность 835 кг/м@sup(3);)
+ @item(при расходе через канал 100 кг/ч.)
+@end(list)
+
+ @b(Решение:)
+ @b(Пример использования:)
+@begin[lang=lisp](code)
+ (in-package #:fors-lic)
+ (let ((ch (make-instance 'ch :mfr (* 75.0 ) :pdr 30.0 )))
+       (pd ch 100.0))
+ =>53.333336 [кгс/см2]
+@end(code)
+
+ Задача 3
+Определить перепад давления на канале форсунки, спроектированном на следующие параметры:
+@begin(list)
+ @item(расход 75 кг/ч; перепад давления 30 кгс/см@sup(2);)
+ @item(рабочая жидкость имеет плотность 835 кг/м@sup(3);)
+ @item(при расходе через канал 100 кг/ч и работе на жидкости с полтностью 1000 кг/м@sup(3).)
+@end(list)
+
+ @b(Решение:)
+@begin[lang=lisp](code)
+ (in-package #:fors-lic)
+ (let ((ch (make-instance 'ch :mfr (* 75.0 ) :pdr 30.0 )))
+       (pd ch 100.0 :licuid-density 1000.0))
+  =>44.533333 [кгс/см2]
+@end(code)
+@begin(section)
+ @title(Обобщенные функции)
+ @cl:with-package[name="FORS-LIC"](
+  @cl:doc(generic pd2-by-mfr)
+  @cl:doc(generic pd)
+  @cl:doc(generic mfr1-by-mfr)
+  @cl:doc(generic mfr2-by-mfr)
+  @cl:doc(generic mass-flow-rate)
+  @cl:doc(generic pd1-by-mfr)
+  @cl:doc(generic pd2-by-pd1))
+@end(section)
+@begin(section)
+ @title(Методы)
+ @cl:with-package[name="FORS-LIC"](
+  @cl:doc(method print-object (x <channel>) s)
+  @cl:doc(method pd2-by-mfr (x <fors-2>) mass-flow-rate &key (liquid-density (<channel>-den (<fors-2>-channel-1 x))))
+  @cl:doc(method pd (x <fors-2>) mass-flow-rate &key (liquid-density (<channel>-den (<fors-2>-channel-1 x))))
+  @cl:doc(method mfr1-by-mfr (x <fors-2>) mass-flow-rate &key (liquid-density (<channel>-den (<fors-2>-channel-1 x))))
+  @cl:doc(method print-object (x <channel>) s)
+  @cl:doc(method mfr2-by-mfr (x <fors-2>) mass-flow-rate &key liquid-density)
+  @cl:doc(method mass-flow-rate (x <fors-2>) pressure-drop &key (liquid-density (<channel>-den (<fors-2>-channel-1 x))))
+  @cl:doc(method pd1-by-mfr (x <fors-2>) mass-flow-rate &key (liquid-density (<channel>-den (<fors-2>-channel-1 x))))
+  @cl:doc(method pd2-by-pd1 (x <fors-2>) pressure-drop-on-channel-1)
+  @cl:doc(method <fors-2>-tbl (<fors-2> <fors-2>)))
+@end(section)
+@begin(section)
+ @title(Классы)
+ @cl:with-package[name="FORS-LIC"](
+  @cl:doc(class <channel>)
+  @cl:doc(class <fors-2>))
+@end(section)
+@end(section)

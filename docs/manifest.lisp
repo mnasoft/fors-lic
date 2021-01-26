@@ -4,4 +4,5 @@
               :authors ("Nick Matvyeyev")
               :output-format (:type :multi-html
                               :template :minima)
-              :sources ("manual.scr"))))
+              :sources ("fors-lic.scr"
+                        "fors-lic-graph.scr"))))
