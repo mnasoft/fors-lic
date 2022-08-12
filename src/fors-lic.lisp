@@ -175,7 +175,7 @@ G  - расход через форсунку;
  " @b(Описание:) метод @b(pd) возвращает перепад давления на форсунке
  <fors-2> при массовом расходе через нее @b(mass-flow-rate) и
  плотности рабочей среды @b(liquid-density)."
-  (half-div:H-DIV-LST 0 10.0
+  (math/half-div:H-DIV-LST 0 10.0
 		      #'(lambda (pd G fors) (- G (mass-flow-rate fors pd )))
 		      0 (list t mass-flow-rate x)))
 
