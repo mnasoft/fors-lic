@@ -1,6 +1,6 @@
 ;;;; fors-lic.lisp
 
-(defpackage #:fors-lic
+(defpackage :fors-lic
   (:use #:cl)
   (:export pd2-by-pd1  pd2-by-pd1
 	   pd1-by-mfr  pd2-by-mfr 
@@ -37,7 +37,7 @@
 
  @b(Решение:)
 @begin[lang=lisp](code)
- (in-package #:fors-lic)
+ (in-package :fors-lic)
  (let ((ch (make-instance 'ch :mfr (* 75.0) :pdr 30.0 )))
   (mass-flow-rate ch 20.0))
  =>61.237247 [кг/ч]
@@ -54,7 +54,7 @@
 
  @b(Решение:)
 @begin[lang=lisp](code)
- (in-package #:fors-lic)
+ (in-package :fors-lic)
  (let ((ch (make-instance 'ch :mfr (* 75.0 ) :pdr 30.0 )))
        (pd ch 100.0))
  =>53.333336 [кгс/см2]
@@ -70,14 +70,14 @@
 
  @b(Решение:)
 @begin[lang=lisp](code)
- (in-package #:fors-lic)
+ (in-package :fors-lic)
  (let ((ch (make-instance 'ch :mfr (* 75.0 ) :pdr 30.0 )))
        (pd ch 100.0 :licuid-density 1000.0))
   =>44.533333 [кгс/см2]
 @end(code)
 "))
 
-(in-package #:fors-lic)
+(in-package :fors-lic)
 
 (defclass <channel> ()
   ((mfr :accessor <channel>-mfr :initform 1.0   :initarg  :mfr :documentation "Массовый расход в контрольной точке")

@@ -1,6 +1,6 @@
 ;;;; fors-lic.lisp
 
-(in-package #:fors-lic)
+(in-package :fors-lic)
 
 (require :math)
 
